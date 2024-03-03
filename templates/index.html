@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal-like Web Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha384-D94C6roJWTFG9G8zTwZneNZzXl7AaIR3VqOD3uKeaAXmQXqNeYL9sGus5LxopIMc" crossorigin="anonymous"></script>
+</head>
+<body>
+    <textarea id="output" rows="20" cols="80" readonly></textarea>
+    <input id="input" type="text" placeholder="Type a command..." autocomplete="off">
+    <button id="send">Send</button>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('output', function(data) {
+            document.getElementById('output').value += data;
+        });
+
+        document.getElementById('send').onclick = function() {
+            var command = document.getElementById('input').value.trim();
+            if (command !== '') {
+                socket.emit('command', command);
+                document.getElementById('input').value = '';
+            }
+        };
+    </script>
+</body>
+</html>
